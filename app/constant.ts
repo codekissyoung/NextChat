@@ -639,6 +639,8 @@ const moonshotModels = [
   "moonshot-v1-128k-vision-preview",
   "kimi-thinking-preview",
   "kimi-k2-0711-preview",
+  "kimi-k2-0905-preview",
+  "kimi-k2-turbo-preview",
   "kimi-latest",
 ];
 
