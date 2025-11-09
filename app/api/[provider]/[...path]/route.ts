@@ -63,6 +63,7 @@ async function handle(
 export const GET = handle;
 export const POST = handle;
 
+// 恢复edge runtime（原有配置）
 export const runtime = "edge";
 export const preferredRegion = [
   "arn1",

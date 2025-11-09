@@ -1,0 +1,10 @@
+{
+  "model": "kimi-k2-0905-preview",
+  "messages": [
+    {
+      "role": "user",
+      "content": "你好，请简单回复"
+    }
+  ],
+  "stream": false
+}

@@ -1,0 +1,22 @@
+{
+  "model": "kimi-k2-0905-preview",
+  "messages": [
+    {
+      "role": "user",
+      "content": "请告诉我现在的时间"
+    }
+  ],
+  "tools": [
+    {
+      "type": "function",
+      "function": {
+        "name": "current_time",
+        "description": "获取系统当前时间",
+        "parameters": {
+          "type": "object",
+          "properties": {}
+        }
+      }
+    }
+  ]
+}
