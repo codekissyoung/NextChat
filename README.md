@@ -402,6 +402,35 @@ yarn install
 yarn dev
 ```
 
+#### How NextChat Runs
+
+**Development Mode** (Default: http://localhost:3000)
+```bash
+yarn dev
+```
+This command executes:
+- `mask:watch` - Monitors `app/masks` directory and rebuilds on changes
+- `next dev` - Starts Next.js development server with hot reload
+
+**Production Mode**
+```bash
+yarn build    # Build production bundle
+yarn start    # Run production server (port 3000)
+```
+
+**Tech Stack**
+- **Frontend**: React 18 + TypeScript + Zustand (state management)
+- **Backend**: Next.js API Routes (`app/api/` directory)
+- **Runtime**:
+  - Edge Runtime (fast proxy for API providers)
+  - Node.js Runtime (for ReACT agent with shell tools)
+
+**Key Features**
+- Auto hot-reload: Code changes take effect immediately
+- Concurrent execution: Multiple commands run in parallel via `concurrently`
+- API Routes: Server-side logic in `app/api/` directory
+- Client-side code: React components in `app/client/` directory
+
 ## Deployment
 
 ### Docker (Recommended)

@@ -313,6 +313,35 @@ BASE_URL=https://b.nextweb.fun/api/proxy
 2. 执行 `yarn install && yarn dev` 即可。⚠️ 注意：此命令仅用于本地开发，不要用于部署！
 3. 如果你想本地部署，请使用 `yarn install && yarn build && yarn start` 命令，你可以配合 pm2 来守护进程，防止被杀死，详情询问 ChatGPT。
 
+#### NextChat 运行机制
+
+**开发模式** (默认地址: http://localhost:3000)
+```bash
+yarn dev
+```
+该命令会执行：
+- `mask:watch` - 监听 `app/masks` 目录变化并自动重新构建
+- `next dev` - 启动 Next.js 开发服务器，支持热重载
+
+**生产模式**
+```bash
+yarn build    # 构建生产版本
+yarn start    # 运行生产服务器（端口 3000）
+```
+
+**技术栈说明**
+- **前端**: React 18 + TypeScript + Zustand（状态管理）
+- **后端**: Next.js API Routes（位于 `app/api/` 目录）
+- **运行时**:
+  - Edge Runtime（快速代理，用于 API 提供商转发）
+  - Node.js Runtime（用于 ReACT 智能体和 Shell 工具调用）
+
+**核心特性**
+- 自动热重载：修改代码后立即生效，无需重启
+- 并发执行：通过 `concurrently` 同时运行多个命令
+- API Routes：服务端逻辑位于 `app/api/` 目录
+- 客户端代码：React 组件位于 `app/client/` 目录
+
 ## 部署
 
 ### 宝塔面板部署
