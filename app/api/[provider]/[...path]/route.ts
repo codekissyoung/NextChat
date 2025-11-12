@@ -36,7 +36,6 @@ async function handle(
       return bytedanceHandler(req, { params });
     case ApiPath.Alibaba:
       return alibabaHandler(req, { params });
-    // case ApiPath.Tencent: using "/api/tencent"
     case ApiPath.Moonshot:
       return moonshotHandler(req, { params });
     case ApiPath.Stability:
