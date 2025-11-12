@@ -292,7 +292,16 @@ async function request(req: NextRequest) {
           }
 
           // 【非流式响应】前端不需要打字机效果，直接返回 JSON
-          return NextResponse.json(result);
+          // 过滤掉注入的系统提示，返回真实的对话历史（包括 tool 消息）
+          const clientMessages = messages.filter((m) => m !== systemPrompt);
+          console.log(
+            `[Moonshot ReACT] 📦 Returning ${clientMessages.length} messages to frontend (including tool messages)`,
+          );
+
+          return NextResponse.json({
+            ...result,
+            __react_messages: clientMessages, // 自定义字段：完整对话历史
+          });
         }
 
         // ============ AI 要求调用工具，执行并继续循环 ============
@@ -422,8 +431,17 @@ async function request(req: NextRequest) {
       }
 
       // 【非流式响应】返回完整 JSON
+      // 过滤掉注入的系统提示，返回真实的对话历史（包括 tool 消息）
+      const clientMessages = messages.filter((m) => m !== systemPrompt);
+      console.log(
+        `[Moonshot ReACT] 📦 Returning ${clientMessages.length} messages to frontend (including tool messages)`,
+      );
+
       const finalResult = await finalResponse.json();
-      return NextResponse.json(finalResult);
+      return NextResponse.json({
+        ...finalResult,
+        __react_messages: clientMessages, // 自定义字段：完整对话历史
+      });
     } else {
       // 非聊天请求，直接代理
       const response = await fetch(fetchUrl, {

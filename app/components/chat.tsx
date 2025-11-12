@@ -1781,6 +1781,7 @@ function _Chat() {
               }}
             >
               {messages
+                .filter((m) => m.role !== "tool") // 过滤掉 tool 消息（ReACT 工具调用记录）
                 // TODO
                 // .filter((m) => !m.isMcpResponse)
                 .map((message, i) => {

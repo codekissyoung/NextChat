@@ -470,13 +470,43 @@ export const useChatStore = createPersistStore(
               session.messages = session.messages.concat();
             });
           },
-          async onFinish(message) {
+          async onFinish(message, responseRes) {
             botMessage.streaming = false;
-            if (message) {
-              botMessage.content = message;
-              botMessage.date = new Date().toLocaleString();
-              get().onNewMessage(botMessage, session);
+
+            // 检查是否有 ReACT 消息历史（完整对话上下文）
+            const reactMessages = (responseRes as any).__reactMessages;
+
+            if (reactMessages && Array.isArray(reactMessages)) {
+              // 使用服务端返回的完整消息历史（包括 tool 消息）
+              console.log(
+                `[ReACT] Replacing with ${reactMessages.length} messages from server (including tool calls)`,
+              );
+              get().updateTargetSession(session, (session) => {
+                // 保留用户消息（最后一条），加上服务端返回的完整历史
+                const userMessages = session.messages.filter(
+                  (m) => m.role === "user",
+                );
+                const lastUserMessage = userMessages[userMessages.length - 1];
+
+                // 转换服务端消息格式为前端格式
+                const convertedMessages = reactMessages.map((msg: any) => ({
+                  ...msg,
+                  id: msg.id || nanoid(),
+                  date: msg.date || new Date().toLocaleString(),
+                }));
+
+                session.messages = [...convertedMessages];
+                session.lastUpdate = Date.now();
+              });
+            } else {
+              // 正常流程：没有 ReACT 消息历史，使用原有逻辑
+              if (message) {
+                botMessage.content = message;
+                botMessage.date = new Date().toLocaleString();
+                get().onNewMessage(botMessage, session);
+              }
             }
+
             ChatControllerPool.remove(session.id, botMessage.id);
           },
           onBeforeTool(tool: ChatMessageTool) {
