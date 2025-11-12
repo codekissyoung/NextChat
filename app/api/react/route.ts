@@ -5,17 +5,13 @@ import { executeShellTool, SHELL_TOOLS } from "@/app/tools/shell";
 
 // 必须使用nodejs runtime以支持child_process
 export const runtime = "nodejs";
-
 const serverConfig = getServerSideConfig();
-
 export async function POST(req: NextRequest) {
   try {
     const requestBody = await req.json();
-
     const MAX_ITERATIONS = 3;
     let messages = [...requestBody.messages];
     let iterations = 0;
-
     const baseUrl = (serverConfig.moonshotUrl || MOONSHOT_BASE_URL).replace(
       /\/$/,
       "",
@@ -23,12 +19,12 @@ export async function POST(req: NextRequest) {
     const apiKey = serverConfig.moonshotApiKey;
 
     console.log("[ReACT API] Starting with messages:", messages.length);
-
     while (iterations < MAX_ITERATIONS) {
       iterations++;
       console.log(`[ReACT API] Iteration ${iterations}/${MAX_ITERATIONS}`);
 
       // 调用Kimi API
+      console.log(requestBody.model);
       const response = await fetch(`${baseUrl}/v1/chat/completions`, {
         method: "POST",
         headers: {
@@ -76,14 +72,12 @@ export async function POST(req: NextRequest) {
       for (const toolCall of assistantMessage.tool_calls) {
         const toolName = toolCall.function.name;
         console.log(`[ReACT API] Executing tool: ${toolName}`);
-
         try {
           const toolResult = await executeShellTool(toolName);
           console.log(
             `[ReACT API] Tool result (${toolName}):`,
             toolResult.substring(0, 200),
           );
-
           messages.push({
             role: "tool",
             tool_call_id: toolCall.id,
@@ -116,6 +110,7 @@ export async function POST(req: NextRequest) {
     });
 
     const finalResult = await finalResponse.json();
+    console.log("[ReACT API] Response:", finalResult);
     return NextResponse.json(finalResult);
   } catch (error: any) {
     console.error("[ReACT API] Unexpected error:", error);

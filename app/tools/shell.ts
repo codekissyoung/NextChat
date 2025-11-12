@@ -12,12 +12,10 @@ const SAFE_COMMANDS: Record<string, string[]> = {
   system_info: ["uname", "-a"],
   node_version: ["node", "--version"],
   git_status: ["git", "status", "--short"],
-  // 添加更多工具...
 };
 
 export async function executeShellTool(toolName: string): Promise<string> {
   const commandArgs = SAFE_COMMANDS[toolName];
-
   if (!commandArgs) {
     return `Error: Tool '${toolName}' not found in whitelist`;
   }

@@ -20,8 +20,11 @@ const nextConfig = {
       );
     }
 
+    // 客户端忽略 Node.js 模块
     config.resolve.fallback = {
       child_process: false,
+      fs: false,
+      path: false,
     };
 
     return config;

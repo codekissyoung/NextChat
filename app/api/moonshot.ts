@@ -9,6 +9,7 @@ import { prettyObject } from "@/app/utils/format";
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/app/api/auth";
 import { isModelNotavailableInServer } from "@/app/utils/model";
+import { proxyRequestWithLogging } from "./common";
 
 const serverConfig = getServerSideConfig();
 
@@ -65,10 +66,11 @@ async function request(req: NextRequest) {
   );
 
   const fetchUrl = `${baseUrl}${path}`;
+  const authValue = req.headers.get("Authorization") ?? "";
   const fetchOptions: RequestInit = {
     headers: {
       "Content-Type": "application/json",
-      Authorization: req.headers.get("Authorization") ?? "",
+      Authorization: authValue,
     },
     method: req.method,
     body: req.body,
@@ -78,6 +80,9 @@ async function request(req: NextRequest) {
     signal: controller.signal,
   };
 
+  // 记录请求体用于日志
+  let requestBodyForLog: any = null;
+
   // #1815 try to refuse some request to some models
   if (serverConfig.customModels && req.body) {
     try {
@@ -85,6 +90,7 @@ async function request(req: NextRequest) {
       fetchOptions.body = clonedBody;
 
       const jsonBody = JSON.parse(clonedBody) as { model?: string };
+      requestBodyForLog = jsonBody; // 保存用于日志
 
       // not undefined and is false
       if (
@@ -107,21 +113,27 @@ async function request(req: NextRequest) {
     } catch (e) {
       console.error(`[Moonshot] filter`, e);
     }
+  } else if (req.body) {
+    // 如果没有customModels检查，仍然需要克隆body用于日志
+    try {
+      const clonedBody = await req.text();
+      fetchOptions.body = clonedBody;
+      requestBodyForLog = JSON.parse(clonedBody);
+    } catch (e) {
+      console.error("[Logger] Failed to clone request body", e);
+    }
   }
+
   try {
-    const res = await fetch(fetchUrl, fetchOptions);
-
-    // to prevent browser prompt for credentials
-    const newHeaders = new Headers(res.headers);
-    newHeaders.delete("www-authenticate");
-    // to disable nginx buffering
-    newHeaders.set("X-Accel-Buffering", "no");
-
-    return new Response(res.body, {
-      status: res.status,
-      statusText: res.statusText,
-      headers: newHeaders,
-    });
+    // 使用通用的代理请求函数（带日志记录）
+    return await proxyRequestWithLogging(
+      "Moonshot",
+      fetchUrl,
+      fetchOptions,
+      requestBodyForLog,
+      "Authorization",
+      authValue,
+    );
   } finally {
     clearTimeout(timeoutId);
   }
