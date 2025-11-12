@@ -69,17 +69,6 @@ export class MoonshotApi implements LLMApi {
       messages.push({ role: v.role, content });
     }
 
-    // 检查是否使用Agent模式（消息以/agent开头）
-    const lastMessage = messages[messages.length - 1];
-    const isAgentMode =
-      typeof lastMessage?.content === "string" &&
-      lastMessage.content.trim().startsWith("/agent");
-
-    // 如果是Agent模式，移除/agent前缀
-    if (isAgentMode && typeof lastMessage?.content === "string") {
-      lastMessage.content = lastMessage.content.replace(/^\/agent\s*/, "");
-    }
-
     const modelConfig = {
       ...useAppConfig.getState().modelConfig,
       ...useChatStore.getState().currentSession().mask.modelConfig,
@@ -100,21 +89,13 @@ export class MoonshotApi implements LLMApi {
     };
 
     console.log("[Request] moonshot payload: ", requestPayload);
-    console.log(
-      "[Agent Mode]",
-      isAgentMode ? "Enabled (using /api/react)" : "Disabled",
-    );
 
-    // Agent模式强制使用非流式响应（因为/api/react不支持流式）
-    const shouldStream = isAgentMode ? false : !!options.config.stream;
+    const shouldStream = !!options.config.stream;
     const controller = new AbortController();
     options.onController?.(controller);
 
     try {
-      // Agent模式使用/api/react，普通模式使用moonshot
-      const chatPath = isAgentMode
-        ? "/api/react"
-        : this.path(Moonshot.ChatPath);
+      const chatPath = this.path(Moonshot.ChatPath);
       const chatPayload = {
         method: "POST",
         body: JSON.stringify(requestPayload),

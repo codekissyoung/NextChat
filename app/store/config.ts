@@ -48,7 +48,7 @@ export const DEFAULT_CONFIG = {
   theme: Theme.Auto as Theme,
   tightBorder: true,
   sendPreviewBubble: true,
-  enableAutoGenerateTitle: true,
+  enableAutoGenerateTitle: false, // 禁用自动标题生成
   sidebarWidth: DEFAULT_SIDEBAR_WIDTH,
 
   enableArtifacts: true, // show artifacts config
@@ -234,7 +234,7 @@ export const useAppConfig = createPersistStore(
       }
 
       if (version < 3.7) {
-        state.enableAutoGenerateTitle = true;
+        state.enableAutoGenerateTitle = false; // 禁用自动标题生成
       }
 
       if (version < 3.8) {

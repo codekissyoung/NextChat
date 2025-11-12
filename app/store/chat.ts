@@ -682,11 +682,13 @@ export const useChatStore = createPersistStore(
         // remove error messages if any
         const messages = session.messages;
 
-        // should summarize topic after chating more than 50 words
-        const SUMMARIZE_MIN_LEN = 50;
+        // should summarize topic after chating more than 150 words AND at least 2 rounds
+        const SUMMARIZE_MIN_LEN = 150;
+        const MIN_ROUNDS = 2; // At least 2 rounds of conversation (4 messages)
         if (
           (config.enableAutoGenerateTitle &&
             session.topic === DEFAULT_TOPIC &&
+            messages.length >= MIN_ROUNDS * 2 &&
             countMessages(messages) >= SUMMARIZE_MIN_LEN) ||
           refreshTitle
         ) {
