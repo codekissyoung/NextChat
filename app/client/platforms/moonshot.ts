@@ -176,6 +176,15 @@ export class MoonshotApi implements LLMApi {
 
         const resJson = await res.json();
         const message = this.extractMessage(resJson);
+
+        // 附加 ReACT 消息历史到 Response 对象（如果存在）
+        if (resJson.__react_messages) {
+          (res as any).__reactMessages = resJson.__react_messages;
+          console.log(
+            `[Moonshot] Received ${resJson.__react_messages.length} ReACT messages from server`,
+          );
+        }
+
         options.onFinish(message, res);
       }
     } catch (e) {
