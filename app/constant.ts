@@ -7,8 +7,6 @@ export const UPDATE_URL = `${REPO_URL}#keep-updated`;
 export const RELEASE_URL = `${REPO_URL}/releases`;
 export const FETCH_COMMIT_URL = `https://api.github.com/repos/${OWNER}/${REPO}/commits?per_page=1`;
 export const FETCH_TAG_URL = `https://api.github.com/repos/${OWNER}/${REPO}/tags?per_page=1`;
-export const RUNTIME_CONFIG_DOM = "danger-runtime-config";
-
 export const STABILITY_BASE_URL = "https://api.stability.ai";
 
 export const OPENAI_BASE_URL = "https://api.openai.com";
@@ -279,14 +277,7 @@ export const AI302 = {
 };
 
 export const DEFAULT_INPUT_TEMPLATE = `{{input}}`; // input / time / model / lang
-// export const DEFAULT_SYSTEM_TEMPLATE = `
-// You are ChatGPT, a large language model trained by {{ServiceProvider}}.
-// Knowledge cutoff: {{cutoff}}
-// Current model: {{model}}
-// Current time: {{time}}
-// Latex inline: $x^2$
-// Latex block: $$e=mc^2$$
-// `;
+
 export const DEFAULT_SYSTEM_TEMPLATE = `
 You are ChatGPT, a large language model trained by {{ServiceProvider}}.
 Knowledge cutoff: {{cutoff}}
@@ -417,11 +408,10 @@ You are an AI assistant with access to system tools. Your role is to help users 
    \`\`\`
    
    please follow the format strictly ONLY use tools/call method!!!!!!!!!!!
-   
 `;
 
-export const SUMMARIZE_MODEL = "gpt-4o-mini";
-export const GEMINI_SUMMARIZE_MODEL = "gemini-pro";
+export const SUMMARIZE_MODEL = "kimi-k2-0905-preview";
+export const GEMINI_SUMMARIZE_MODEL = "gemini-2.5-pro";
 export const DEEPSEEK_SUMMARIZE_MODEL = "deepseek-chat";
 
 export const KnowledgeCutOffDate: Record<string, string> = {
@@ -725,6 +715,5 @@ export const internalAllowedWebDavEndpoints = [
 ];
 
 export const DEFAULT_GA_ID = "G-89WN60ZK2E";
-
 export const SAAS_CHAT_URL = "https://nextchat.club";
 export const SAAS_CHAT_UTM_URL = "https://nextchat.club?utm=github";
