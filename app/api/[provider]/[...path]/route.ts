@@ -62,24 +62,5 @@ async function handle(
 export const GET = handle;
 export const POST = handle;
 
-// 恢复edge runtime（原有配置）
-export const runtime = "edge";
-export const preferredRegion = [
-  "arn1",
-  "bom1",
-  "cdg1",
-  "cle1",
-  "cpt1",
-  "dub1",
-  "fra1",
-  "gru1",
-  "hnd1",
-  "iad1",
-  "icn1",
-  "kix1",
-  "lhr1",
-  "pdx1",
-  "sfo1",
-  "sin1",
-  "syd1",
-];
+// 使用 Node.js Runtime 以支持 ReACT 工具调用（child_process）
+export const runtime = "nodejs";
