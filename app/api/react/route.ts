@@ -24,7 +24,6 @@ export async function POST(req: NextRequest) {
       console.log(`[ReACT API] Iteration ${iterations}/${MAX_ITERATIONS}`);
 
       // 调用Kimi API
-      console.log(requestBody.model);
       const response = await fetch(`${baseUrl}/v1/chat/completions`, {
         method: "POST",
         headers: {
